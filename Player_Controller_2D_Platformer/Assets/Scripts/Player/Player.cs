@@ -5,16 +5,26 @@ using UnityEngine;
 [RequireComponent (typeof (Player_Controller))]
 public class Player : MonoBehaviour
 {
+    public float jumpHeight;
+    public float timeToJumpApex;
+    float accelarationTimeAirborne = .2f;
+    float accelarationTimeGrounded = .1f;
     float moveSpeed = 6;
-    float jumpVelocity = 10;
-    float gravity = -20;
+
+    float jumpVelocity;
+    float gravity;
     Vector3 velocity;
+    float velocityXSmoothing;
 
     Player_Controller controller;
 
     void Start()
     {
         controller = GetComponent<Player_Controller>();
+
+        gravity = -(2 * jumpHeight) / Mathf.Pow(timeToJumpApex, 2);
+        jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
+        print("Gravity: " + gravity + " Jump Velocity: " + jumpVelocity);
     }
 
     void Update()
@@ -31,7 +41,8 @@ public class Player : MonoBehaviour
             velocity.y = jumpVelocity;
         }
 
-        velocity.x = input.x * moveSpeed;
+        float targetVelocityX = input.x * moveSpeed;
+        velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, (controller.collisions.below) ? accelarationTimeGrounded : accelarationTimeAirborne);
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
     }
