@@ -45,12 +45,12 @@ public class Platform_Controller : Raycast_Controller
                     if (!movedObjects.Contains(hit.transform))
                     {
                         movedObjects.Add(hit.transform);
+                    
+                        float pushX = (directionY == 1) ? velocity.x:0;
+                        float pushY = velocity.y - (hit.distance - skinWidth * directionY);
+
+                        hit.transform.Translate(new Vector3(pushX, pushY));
                     }
-
-                    float pushX = (directionY == 1) ? velocity.x:0;
-                    float pushY = velocity.y - (hit.distance - skinWidth * directionY);
-
-                    hit.transform.Translate(new Vector3(pushX, pushY));
                 }
             }
         }
@@ -71,12 +71,37 @@ public class Platform_Controller : Raycast_Controller
                     if (!movedObjects.Contains(hit.transform))
                     {
                         movedObjects.Add(hit.transform);
+                    
+                        float pushX = (directionY == 1) ? velocity.x : 0;
+                        float pushY = velocity.x - (hit.distance - skinWidth * directionX);
+
+                        hit.transform.Translate(new Vector3(pushX, pushY));
                     }
+                }
+            }
+        }
 
-                    float pushX = (directionY == 1) ? velocity.x : 0;
-                    float pushY = velocity.x - (hit.distance - skinWidth * directionX);
+        // Sticks objects to the platform when they are using it:
+        if (directionY == -1 || velocity.y == 0 && velocity.x != 0)
+        {
+            float rayLength = skinWidth * 2;
 
-                    hit.transform.Translate(new Vector3(pushX, pushY));
+            for (int i = 0; i < verticalRayCount; i++)
+            {
+                Vector2 rayOrigin = raycastOrigins.topLeft + Vector2.right * (verticalRaySpacing * i);
+                RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up, rayLength, objectsMask);
+
+                if (hit)
+                {
+                    if (!movedObjects.Contains(hit.transform))
+                    {
+                        movedObjects.Add(hit.transform);
+
+                        float pushX = velocity.x;
+                        float pushY = velocity.y;
+
+                        hit.transform.Translate(new Vector3(pushX, pushY));
+                    }
                 }
             }
         }
