@@ -13,7 +13,7 @@ public class Player_Controller : MonoBehaviour
     public int verticalRayCount = 4;
 
     float maxClimbAngle = 80;
-    float maxDescendAngle = 75;
+    float maxDescendAngle = 80;
 
     // Used to calculate the spacing between each horizontal and vertical ray:
     float horizontalRaySpacing;
@@ -71,14 +71,13 @@ public class Player_Controller : MonoBehaviour
 
                 if (i == 0 && slopeAngle <= maxClimbAngle)
                 {
-                    float distanceToSlopeStart = 0;
-
                     if (collisions.descendingSlope)
                     {
                         collisions.descendingSlope = false;
                         velocity = collisions.velocityOld;
                     }
 
+                    float distanceToSlopeStart = 0;
                     if (slopeAngle != collisions.slopeAngleOld)
                     {
                         distanceToSlopeStart = hit.distance - skinWidth;
@@ -206,7 +205,7 @@ public class Player_Controller : MonoBehaviour
 
         raycastOrigins.bottomLeft = new Vector2(bounds.min.x, bounds.min.y);
         raycastOrigins.bottomRight = new Vector2(bounds.max.x, bounds.min.y);
-        raycastOrigins.topLeft = new Vector2(bounds.max.x, bounds.max.y);
+        raycastOrigins.topLeft = new Vector2(bounds.min.x, bounds.max.y);
         raycastOrigins.topRight = new Vector2(bounds.max.x, bounds.max.y);
     }
 
