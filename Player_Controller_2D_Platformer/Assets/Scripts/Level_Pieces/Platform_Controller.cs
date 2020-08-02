@@ -7,12 +7,22 @@ public class Platform_Controller : Raycast_Controller
     public LayerMask riderMask;
     public Vector3 move;
 
+    public Vector3[] localWaypoints;
+    [HideInInspector]
+    public Vector3[] globalWaypoints;
+
     List<RiderMovement> riderMovement;
     Dictionary<Transform, Player_Controller> riderDictionary = new Dictionary<Transform, Player_Controller>();
 
     public override void Start()
     {
         base.Start();
+
+        globalWaypoints = new Vector3[localWaypoints.Length];
+        for (int i = 0; i < localWaypoints.Length; i++)
+        {
+            globalWaypoints[i] = localWaypoints[i] + transform.position;
+        }
     }
 
     void Update()
@@ -152,6 +162,24 @@ public class Platform_Controller : Raycast_Controller
             velocity = _velocity;
             standingOnPlatform = _standingOnPlatform;
             movedBeforePlatform = _movedBeforePlatform;
+        }
+    }
+
+    void OnDrawGizmos()
+    {
+        if (localWaypoints != null)
+        {
+            Gizmos.color = Color.red;
+            float size = .3f;
+
+            for (int i = 0; i < localWaypoints.Length; i++)
+            {
+                Vector3 globalWaypointPos = (Application.isPlaying)?globalWaypoints[i] : localWaypoints[i] + transform.position;
+                // Draws the vertical trajectory:
+                Gizmos.DrawLine(globalWaypointPos - Vector3.up * size, globalWaypointPos + Vector3.up * size);
+                // Draws the horizontal trajectory:
+                Gizmos.DrawLine(globalWaypointPos - Vector3.left * size, globalWaypointPos + Vector3.left * size);
+            }
         }
     }
 }
