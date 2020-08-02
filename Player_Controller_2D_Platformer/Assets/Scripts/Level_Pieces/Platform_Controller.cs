@@ -5,7 +5,10 @@ using UnityEngine;
 public class Platform_Controller : Raycast_Controller
 {
     public LayerMask riderMask;
-    public Vector3 move;
+    //public Vector3 move;
+    public float speed;
+    int fromWaypointIndex;
+    float percentBetweenWaypoints; // between 0 and 1
 
     public Vector3[] localWaypoints;
     [HideInInspector]
@@ -29,13 +32,36 @@ public class Platform_Controller : Raycast_Controller
     {
         UpdateRaycastOrigins();
 
-        Vector3 velocity = move * Time.deltaTime;
+        //Vector3 velocity = move * Time.deltaTime;
+        Vector3 velocity = CalculatePlatformMovement();
 
         CalculateRiderMovement(velocity);
 
         MoveRiders(true);
         transform.Translate(velocity);
         MoveRiders(false);
+    }
+
+    Vector3 CalculatePlatformMovement()
+    {
+        int toWaypointIndex = fromWaypointIndex + 1;
+        float distanceBetweenWaypoins = Vector3.Distance(globalWaypoints[fromWaypointIndex], globalWaypoints[toWaypointIndex]);
+        percentBetweenWaypoints += Time.deltaTime * speed / distanceBetweenWaypoins;
+
+        Vector3 newPos = Vector3.Lerp(globalWaypoints[fromWaypointIndex], globalWaypoints[toWaypointIndex], percentBetweenWaypoints);
+
+        if (percentBetweenWaypoints >= 1)
+        {
+            percentBetweenWaypoints = 0;
+            fromWaypointIndex++;
+            if (fromWaypointIndex >= globalWaypoints.Length - 1)
+            {
+                fromWaypointIndex = 0;
+                System.Array.Reverse(globalWaypoints);
+            }
+        }
+
+        return newPos - transform.position;
     }
     
     void MoveRiders(bool beforeMovePlatform)

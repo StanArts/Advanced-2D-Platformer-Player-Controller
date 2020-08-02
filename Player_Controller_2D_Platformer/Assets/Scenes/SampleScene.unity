@@ -319,10 +319,11 @@ MonoBehaviour:
   riderMask:
     serializedVersion: 2
     m_Bits: 256
-  move: {x: -1, y: 0, z: 0}
+  speed: 2
   localWaypoints:
   - {x: 0, y: 0, z: 0}
   - {x: -5, y: 0, z: 0}
+  globalWaypoints: []
 --- !u!61 &320568070
 BoxCollider2D:
   m_ObjectHideFlags: 0
