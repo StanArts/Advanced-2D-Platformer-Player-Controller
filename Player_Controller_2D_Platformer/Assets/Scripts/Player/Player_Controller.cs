@@ -9,17 +9,25 @@ public class Player_Controller : Raycast_Controller
 
     public CollisionInformation collisions;
 
+    Vector2 playerInput;
+
     public override void Start()
     {
         base.Start();
         collisions.faceDir = 1;
     }
 
-    public void Move(Vector3 velocity, bool standingOnPlatform = false)
+    public void Move (Vector3 velocity, bool standingOnPlatform)
+    {
+        Move(velocity, Vector2.zero, standingOnPlatform);
+    }
+
+    public void Move(Vector3 velocity, Vector2 input, bool standingOnPlatform = false)
     {
         UpdateRaycastOrigins();
         collisions.Reset();
         collisions.velocityOld = velocity;
+        playerInput = input;
 
         if (velocity.x != 0)
         {
@@ -126,8 +134,20 @@ public class Player_Controller : Raycast_Controller
             {
                 if (hit.collider.tag == "Through")
                 {
-                    if (directionY == 1)
+                    if (directionY == 1 || hit.distance == 0)
                     {
+                        continue;
+                    }
+
+                    if (collisions.fallingThroughPlatform)
+                    {
+                        continue;
+                    }
+
+                    if (playerInput.y == -1)
+                    {
+                        collisions.fallingThroughPlatform = true;
+                        Invoke("ResetFallingThroughPlatform", .5f);
                         continue;
                     }
                 }
@@ -207,6 +227,11 @@ public class Player_Controller : Raycast_Controller
         }
     }
 
+    void ResetFallingThroughPlatform()
+    {
+        collisions.fallingThroughPlatform = false;
+    }
+
     public struct CollisionInformation
     {
         public bool above, below;
@@ -217,6 +242,7 @@ public class Player_Controller : Raycast_Controller
         public float slopeAngle, slopeAngleOld;
         public Vector3 velocityOld;
         public int faceDir;
+        public bool fallingThroughPlatform;
 
         public void Reset()
         {

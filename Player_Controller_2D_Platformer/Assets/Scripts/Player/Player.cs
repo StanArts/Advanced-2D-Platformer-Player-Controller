@@ -77,11 +77,6 @@ public class Player : MonoBehaviour
             }
         }
 
-        if (controller.collisions.above || controller.collisions.below)
-        {
-            velocity.y = 0;
-        }
-
         if (Input.GetKeyDown (KeyCode.Space))
         {
             if (wallSliding)
@@ -118,6 +113,11 @@ public class Player : MonoBehaviour
         }
 
         velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
+        controller.Move(velocity * Time.deltaTime, input);
+
+        if (controller.collisions.above || controller.collisions.below)
+        {
+            velocity.y = 0;
+        }
     }
 }

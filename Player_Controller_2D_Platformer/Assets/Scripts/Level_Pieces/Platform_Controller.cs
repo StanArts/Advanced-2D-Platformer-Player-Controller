@@ -126,7 +126,7 @@ public class Platform_Controller : Raycast_Controller
                 rayOrigin += Vector2.right * (verticalRaySpacing * i);
                 RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, riderMask);
 
-                if (hit)
+                if (hit && hit.distance != 0)
                 {
                     if (!movedRiders.Contains(hit.transform))
                     {
