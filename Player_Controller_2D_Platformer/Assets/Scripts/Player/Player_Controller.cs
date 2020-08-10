@@ -9,7 +9,8 @@ public class Player_Controller : Raycast_Controller
 
     public CollisionInformation collisions;
 
-    Vector2 playerInput;
+    [HideInInspector]
+    public Vector2 playerInput;
 
     public override void Start()
     {

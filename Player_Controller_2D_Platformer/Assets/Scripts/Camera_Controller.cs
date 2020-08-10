@@ -22,6 +22,8 @@ public class Camera_Controller : MonoBehaviour
     float smoothLookVelocityX;
     float smoothVelocityY;
 
+    bool lookAheadStopped;
+
     void Start()
     {
         focusedArea = new FocusedArea(target.collider.bounds, focusedAreaSize);
@@ -36,11 +38,26 @@ public class Camera_Controller : MonoBehaviour
         if (focusedArea.velocity.x != 0)
         {
             lookAheadDirX = Mathf.Sign(focusedArea.velocity.x);
+
+            if (Mathf.Sign(target.playerInput.x) == Mathf.Sign(focusedArea.velocity.x) && target.playerInput.x != 0)
+            {
+                lookAheadStopped = false;
+                targetLookAheadX = lookAheadDirX * lookAheadDistanceX;
+            }
+            else
+            {
+                if (!lookAheadStopped)
+                {
+                    lookAheadStopped = true;
+                    targetLookAheadX = currentLookAheadX + (lookAheadDirX * lookAheadDistanceX - currentLookAheadX)/4f;
+                }
+            }
         }
 
-        targetLookAheadX = lookAheadDirX * lookAheadDistanceX;
         currentLookAheadX = Mathf.SmoothDamp(currentLookAheadX, targetLookAheadX, ref smoothLookVelocityX, lookSmoothTimeX);
+        //targetLookAheadX = lookAheadDirX * lookAheadDistanceX;
 
+        focusedPosition.y = Mathf.SmoothDamp(transform.position.y, focusedPosition.y, ref smoothVelocityY, verticalSmoothTime);
         focusedPosition += Vector2.right * currentLookAheadX;
 
         transform.position = (Vector3)focusedPosition + Vector3.forward * (-10);

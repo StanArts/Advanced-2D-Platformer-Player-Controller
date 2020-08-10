@@ -554,7 +554,7 @@ MonoBehaviour:
   target: {fileID: 1827890569}
   verticalOffset: 1
   lookAheadDistanceX: 4
-  lookSmoothTimeX: 0.2
+  lookSmoothTimeX: 0.5
   verticalSmoothTime: 0.2
   focusedAreaSize: {x: 3, y: 5}
 --- !u!20 &519420031
@@ -1725,6 +1725,7 @@ MonoBehaviour:
   horizontalRaySpacing: 0
   verticalRaySpacing: 0
   collider: {fileID: 0}
+  playerInput: {x: 0, y: 0}
 --- !u!61 &1827890570
 BoxCollider2D:
   m_ObjectHideFlags: 0
