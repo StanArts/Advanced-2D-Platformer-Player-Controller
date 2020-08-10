@@ -30,6 +30,8 @@ public class Player_Controller : Raycast_Controller
         {
             DescendSlope(ref velocity);
         }
+
+        HorizontalCollisions(ref velocity);
         
         if (velocity.y != 0)
         {
