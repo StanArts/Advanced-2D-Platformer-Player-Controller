@@ -5,13 +5,15 @@ using UnityEngine;
 [RequireComponent (typeof (Player_Controller))]
 public class Player : MonoBehaviour
 {
-    public float jumpHeight;
+    public float maxJumpHeight;
+    public float minJumpHeight;
     public float timeToJumpApex;
     float accelarationTimeAirborne = .2f;
     float accelarationTimeGrounded = .1f;
     float moveSpeed = 6;
 
-    float jumpVelocity;
+    float maxJumpVelocity;
+    float minJumpVelocity;
     float gravity;
     Vector3 velocity;
     float velocityXSmoothing;
@@ -30,9 +32,10 @@ public class Player : MonoBehaviour
     {
         controller = GetComponent<Player_Controller>();
 
-        gravity = -(2 * jumpHeight) / Mathf.Pow(timeToJumpApex, 2);
-        jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
-        print("Gravity: " + gravity + " Jump Velocity: " + jumpVelocity);
+        gravity = -(2 * maxJumpHeight) / Mathf.Pow(timeToJumpApex, 2);
+        maxJumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
+        minJumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(gravity) * minJumpHeight);
+        print("Gravity: " + gravity + " Jump Velocity: " + maxJumpVelocity);
     }
 
     void Update()
@@ -102,7 +105,15 @@ public class Player : MonoBehaviour
 
             if (controller.collisions.below)
             {
-                velocity.y = jumpVelocity;
+                velocity.y = maxJumpVelocity;
+            }
+        }
+
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            if (velocity.y > minJumpHeight)
+            {
+                velocity.y = minJumpVelocity;
             }
         }
 

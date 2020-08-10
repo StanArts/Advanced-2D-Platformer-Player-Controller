@@ -124,6 +124,14 @@ public class Player_Controller : Raycast_Controller
 
             if (hit)
             {
+                if (hit.collider.tag == "Through")
+                {
+                    if (directionY == 1)
+                    {
+                        continue;
+                    }
+                }
+
                 velocity.y = (hit.distance - skinWidth) * directionY;
                 rayLength = hit.distance;
 
