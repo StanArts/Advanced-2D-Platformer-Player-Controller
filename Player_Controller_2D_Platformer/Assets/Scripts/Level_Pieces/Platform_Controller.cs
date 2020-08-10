@@ -12,6 +12,11 @@ public class Platform_Controller : Raycast_Controller
 
     public bool isCycling;
 
+    public float waitTime;
+    float nextMoveTime;
+    [Range(0,20)]
+    public float easeAmount;
+
     public Vector3[] localWaypoints;
     [HideInInspector]
     public Vector3[] globalWaypoints;
@@ -44,14 +49,27 @@ public class Platform_Controller : Raycast_Controller
         MoveRiders(false);
     }
 
+    float Ease (float x)
+    {
+        float a = easeAmount + 1;
+        return Mathf.Pow(x, a) / (Mathf.Pow(x, a) + Mathf.Pow(1-x, a));
+    }
+
     Vector3 CalculatePlatformMovement()
     {
+        if (Time.time < nextMoveTime)
+        {
+            return Vector3.zero;
+        }
+
         fromWaypointIndex %= globalWaypoints.Length;
         int toWaypointIndex = (fromWaypointIndex + 1) % globalWaypoints.Length;
         float distanceBetweenWaypoins = Vector3.Distance(globalWaypoints[fromWaypointIndex], globalWaypoints[toWaypointIndex]);
         percentBetweenWaypoints += Time.deltaTime * speed / distanceBetweenWaypoins;
+        percentBetweenWaypoints = Mathf.Clamp01(percentBetweenWaypoints);
+        float easePercentBetweenWaypoints = Ease(percentBetweenWaypoints);
 
-        Vector3 newPos = Vector3.Lerp(globalWaypoints[fromWaypointIndex], globalWaypoints[toWaypointIndex], percentBetweenWaypoints);
+        Vector3 newPos = Vector3.Lerp(globalWaypoints[fromWaypointIndex], globalWaypoints[toWaypointIndex], easePercentBetweenWaypoints);
 
         if (percentBetweenWaypoints >= 1)
         {
@@ -66,6 +84,8 @@ public class Platform_Controller : Raycast_Controller
                     System.Array.Reverse(globalWaypoints);
                 }
             }
+
+            nextMoveTime = Time.time + waitTime;
         }
 
         return newPos - transform.position;
